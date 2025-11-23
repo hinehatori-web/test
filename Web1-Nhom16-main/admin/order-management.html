@@ -3,251 +3,248 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý đơn hàng</title>
+  <title>Quản lý đơn hàng | AccountShop Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
   <style>
+    :root {
+      --primary: #00d4ff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --pending: #6366f1;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --text: #e2e8f0;
+      --text-light: #94a3b8;
+      --border: #334155;
+      --sidebar-width: 280px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #0f1724;
-      color: #e2e8f0;
-      margin: 0;
-      padding: 24px;
-    }
-    .container { max-width: 1100px; margin: auto; }
-    h1 { color: #38bdf8; font-size: 22px; }
-
-    .card {
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      color: var(--text);
+      min-height: 100vh;
     }
 
-    input, select {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: #e2e8f0;
-      padding: 8px;
-      border-radius: 8px;
-      outline: none;
+    /* Header & Sidebar (đồng bộ hoàn toàn) */
+    .admin-header {
+      position: fixed; top: 0; left: 0; right: 0; height: 70px;
+      background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); display: flex;
+      align-items: center; justify-content: space-between; padding: 0 30px; z-index: 1000;
+    }
+    .logo { display: flex; align-items: center; gap: 15px; font-size: 26px; font-weight: 700; color: var(--primary); text-decoration: none; }
+    .logo i { font-size: 34px; background: linear-gradient(45deg, #00d4ff, #9d4edd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .page-title { font-size: 20px; color: var(--text-light); }
+    .back-btn { background: rgba(0, 212, 255, 0.15); color: var(--primary); padding: 10px 24px; border-radius: 50px; text-decoration: none; font-weight: 600; border: 1px solid rgba(0, 212, 255, 0.3); transition: all 0.3s; }
+    .back-btn:hover { background: var(--primary); color: #000; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3); }
+
+    .admin-container { display: flex; margin-top: 70px; min-height: calc(100vh - 70px); }
+    .sidebar { width: var(--sidebar-width); background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px); padding: 30px 20px; border-right: 1px solid var(--border); position: fixed; left: 0; top: 70px; bottom: 0; overflow-y: auto; }
+    .sidebar h2 { color: var(--primary); margin-bottom: 30px; font-size: 20px; padding-left: 10px; border-left: 4px solid var(--primary); }
+    .sidebar a { display: flex; align-items: center; gap: 15px; padding: 14px 18px; color: var(--text-light); text-decoration: none; border-radius: 12px; margin: 8px 10px; transition: all 0.3s; font-weight: 500; }
+    .sidebar a:hover, .sidebar a.active { background: linear-gradient(90deg, rgba(0, 212, 255, 0.15), transparent); color: var(--primary); transform: translateX(8px); }
+    .sidebar a i { font-size: 20px; width: 30px; }
+
+    .admin-content { flex: 1; margin-left: var(--sidebar-width); padding: 40px; }
+
+    .content-card {
+      background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(12px);
+      border-radius: 20px; padding: 30px; border: 1px solid rgba(0, 212, 255, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); margin-bottom: 30px;
     }
 
-    button {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    button.search { background: #06b6d4; color: #041324; }
-    button.edit { background: #1e3a8a; color: #e0f2fe; }
-    button.delete { background: #dc2626; color: white; }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 16px;
-    }
-    th, td {
-      text-align: left;
-      padding: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-    th { color: #94a3b8; font-size: 14px; }
-
-    .status {
-      font-weight: bold;
-      border-radius: 6px;
-      padding: 4px 8px;
-    }
-    .new { color: #0ea5e9; }
-    .processing { color: #fbbf24; }
-    .delivered { color: #22c55e; }
-    .cancelled { color: #ef4444; }
-
-    .filter-group {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
+    .card-title {
+      font-size: 26px; background: linear-gradient(90deg, #00d4ff, #9d4edd);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
     }
 
+    .demo-notice {
+      background: rgba(251, 191, 36, 0.15); color: #fbbf24; padding: 16px;
+      border-radius: 12px; border-left: 4px solid #fbbf24; font-size: 15px; margin-bottom: 25px;
+    }
+
+    table { width: 100%; border-collapse: separate; border-spacing: 0 12px; margin-top: 10px; }
+    th { background: rgba(0, 212, 255, 0.1); padding: 18px 20px; text-align: left; color: var(--primary); font-weight: 600; font-size: 15px; }
+    td { background: rgba(15, 23, 42, 0.6); padding: 18px 20px; border-radius: 12px; }
+
+    tr:hover td { background: rgba(0, 212, 255, 0.08); transform: scale(1.01); transition: all 0.3s; }
+
+    .status { padding: 8px 16px; border-radius: 50px; font-size: 13px; font-weight: 700; display: inline-block; }
+    .status-new { background: rgba(14, 165, 233, 0.2); color: #0ea5e9; border: 1px solid rgba(14, 165, 233, 0.4); }
+    .status-processing { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); }
+    .status-delivered { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4); }
+    .status-cancelled { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn { padding: 8px 14px; border: none; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: default; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-view { background: #6366f1; color: white; }
+    .btn-update { background: #06b6d4; color: white; }
+    .btn-cancel { background: #dc2626; color: white; }
+
+    /* Modal chi tiết đơn hàng (tĩnh) */
     .modal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-      display: none;
-      justify-content: center;
-      align-items: center;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+      display: flex; justify-content: center; align-items: center; z-index: 2000;
     }
     .modal-content {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 500px;
-      color: #e2e8f0;
+      background: rgba(30, 41, 59, 0.98); border: 1px solid rgba(0,212,255,0.3);
+      border-radius: 20px; padding: 30px; max-width: 600px; width: 90%;
+      box-shadow: 0 20px 50px rgba(0, 212, 255, 0.3);
     }
-    .modal h3 { color: #38bdf8; }
-    .close-btn {
-      background: transparent;
-      border: 1px solid #475569;
-      color: #94a3b8;
-      float: right;
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-title { font-size: 24px; color: var(--primary); }
+    .close-modal { background: transparent; color: #94a3b8; font-size: 28px; cursor: default; }
+
+    @media (max-width: 992px) {
+      .sidebar { transform: translateX(-100%); }
+      .admin-content { margin-left: 0; padding: 20px; }
+      table, thead, tbody, th, td, tr { display: block; }
+      th { display: none; }
+      td { padding: 15px; border-radius: 12px; margin-bottom: 12px; }
+      td:before { content: attr(data-label); font-weight: bold; color: var(--primary); display: block; margin-bottom: 8px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Quản lý đơn đặt hàng</h1>
-    <a href="admin-dashboard" class="back-home-btn">⬅ Trở về trang chủ</a>
-    <!-- Bộ lọc -->
-    <div class="card">
-      <h3>Tìm kiếm và lọc đơn hàng</h3>
-      <div class="filter-group">
-        <div>
-          <label>Từ ngày:</label>
-          <input type="date" id="fromDate">
+
+  <header class="admin-header">
+    <a href="admin-dashboard.html" class="logo">
+      AccountShop
+    </a>
+    <div style="display:flex; align-items:center; gap:20px;">
+      <div class="page-title">Quản lý đơn hàng</div>
+      <a href="admin-dashboard.html" class="back-btn">Trở về Dashboard</a>
+    </div>
+  </header>
+
+  <div class="admin-container">
+    <aside class="sidebar">
+      <h2>Quản Trị Hệ Thống</h2>
+      <ul style="list-style:none;">
+        <li><a href="user-management.html">Quản lý người dùng</a></li>
+        <li><a href="category-management.html">Quản lý loại sản phẩm</a></li>
+        <li><a href="product-management.html">Quản lý tài khoản game</a></li>
+        <li><a href="import-management.html">Nhập sản phẩm</a></li>
+        <li><a href="price-management.html">Quản lý giá bán</a></li>
+        <li><a href="order-management.html" class="active">Quản lý đơn hàng</a></li>
+        <li><a href="inventory-management.html">Quản lý tồn kho</a></li>
+      </ul>
+    </aside>
+
+    <main class="admin-content">
+      <div class="content-card">
+        <h2 class="card-title">
+          Danh sách đơn hàng (128 đơn hàng trong 30 ngày gần nhất)
+        </h2>
+
         </div>
-        <div>
-          <label>Đến ngày:</label>
-          <input type="date" id="toDate">
-        </div>
-        <div>
-          <label>Tình trạng:</label>
-          <select id="statusFilter">
-            <option value="">-- Tất cả --</option>
-            <option value="Mới đặt">Mới đặt</option>
-            <option value="Đã xử lý">Đã xử lý</option>
-            <option value="Đã giao">Đã giao</option>
-            <option value="Hủy">Hủy</option>
-          </select>
-        </div>
-        <div style="align-self: end;">
-          <button class="search" onclick="filterOrders()">Lọc đơn hàng</button>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Mã đơn</th>
+              <th>Khách hàng</th>
+              <th>Ngày đặt</th>
+              <th>Sản phẩm</th>
+              <th>Tổng tiền</th>
+              <th>Trạng thái</th>
+              <th style="text-align:center;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="Mã">OD1288</td>
+              <td data-label="Khách">Nguyễn Văn Hoàng</td>
+              <td data-label="Ngày">23/11/2025 19:45</td>
+              <td data-label="Sản phẩm">Free Fire Rank Huyền Thoại 1</td>
+              <td data-label="Tổng"><strong>1,250,000 ₫</strong></td>
+              <td data-label="Trạng thái"><span class="status status-new">Mới đặt</span></td>
+              <td data-label="Thao tác">
+                <div class="actions">
+                  <button class="btn btn-view">Xem chi tiết</button>
+                  <button class="btn btn-update">Cập nhật trạng thái</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="Mã">OD1287</td>
+              <td data-label="Khách">Trần Minh Tuấn</td>
+              <td data-label="Ngày">23/11/2025 18:20</td>
+              <td data-label="Sản phẩm">Liên Quân Kim Cương + 120 Skin</td>
+              <td data-label="Tổng"><strong>980,000 ₫</strong></td>
+              <td data-label="Trạng thái"><span class="status status-processing">Đã xử lý</span></td>
+              <td data-label="Thao tác">
+                <div class="actions">
+                  <button class="btn btn-view">Xem</button>
+                  <button class="btn btn-update">Giao hàng</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="Mã">OD1286</td>
+              <td data-label="Khách">Lê Thị Mai</td>
+              <td data-label="Ngày">22/11/2025 22:10</td>
+              <td data-label="Sản phẩm">Robux 10.000</td>
+              <td data-label="Tổng"><strong>1,850,000 ₫</strong></td>
+              <td data-label="Trạng thái"><span class="status status-delivered">Đã giao</span></td>
+              <td data-label="Thao tác">
+                <div class="actions">
+                  <button class="btn btn-view">Xem</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="Mã">OD1285</td>
+              <td data-label="Khách">Phạm Quốc Anh</td>
+              <td data-label="Ngày">22/11/2025 15:30</td>
+              <td data-label="Sản phẩm">Valorant Rank Immortal</td>
+              <td data-label="Tổng"><strong>2,200,000 ₫</strong></td>
+              <td data-label="Trạng thái"><span class="status status-cancelled">Đã hủy</span></td>
+              <td data-label="Thao tác">
+                <div class="actions">
+                  <button class="btn btn-view">Xem</button>
+                  <button class="btn btn-cancel">Xóa đơn</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Modal chi tiết đơn hàng (mẫu tĩnh) -->
+      <div class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Chi tiết đơn hàng #OD1288</h3>
+            <span class="close-modal">×</span>
+          </div>
+          <p><strong>Khách hàng:</strong> Nguyễn Văn Hoàng</p>
+          <p><strong>SĐT:</strong> 0987.654.321</p>
+          <p><strong>Email:</strong> hoangnv@gmail.com</p>
+          <p><strong>Ngày đặt:</strong> 23/11/2025 19:45</p>
+          <p><strong>Phương thức thanh toán:</strong> Chuyển khoản ngân hàng</p>
+          <p><strong>Tình trạng:</strong> <span class="status status-new">Mới đặt</span></p>
+          <hr style="margin:20px 0; border-color:#334155;">
+          <h4>Sản phẩm đã mua:</h4>
+          <ul style="margin:15px 0; padding-left:20px;">
+            <li>Free Fire Rank Huyền Thoại 1 × 1 – <strong>1,250,000 ₫</strong></li>
+          </ul>
+          <p style="text-align:right; font-size:20px; color:var(--primary);">
+            <strong>Tổng cộng: 1,250,000 ₫</strong>
+          </p>
+          <div style="margin-top:25px; text-align:right;">
+            <button class="btn btn-update" style="padding:12px 24px; font-size:15px;">Cập nhật trạng thái thành "Đã xử lý"</button>
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- Bảng đơn hàng -->
-    <div class="card">
-      <h3>Danh sách đơn hàng</h3>
-      <div id="orderTableWrap"></div>
-    </div>
+    </main>
   </div>
 
-  <!-- Modal chi tiết đơn hàng -->
-  <div class="modal" id="orderModal">
-    <div class="modal-content">
-      <button class="close-btn" onclick="closeModal()">Đóng</button>
-      <h3>Chi tiết đơn hàng</h3>
-      <div id="orderDetail"></div>
-    </div>
-  </div>
-
-  <script>
-    const LS_KEY = 'ORDER_LIST';
-
-    function getOrders() {
-      try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; }
-      catch { return []; }
-    }
-    function setOrders(data) { localStorage.setItem(LS_KEY, JSON.stringify(data)); }
-
-    // Demo dữ liệu mẫu
-    if (getOrders().length === 0) {
-      setOrders([
-        {id:'OD001', customer:'Nguyễn Văn A', date:'2025-10-01', total:1200000, status:'Mới đặt', products:[{name:'LQ Account', qty:1, price:1200000}]},
-        {id:'OD002', customer:'Trần Thị B', date:'2025-10-03', total:500000, status:'Đã xử lý', products:[{name:'FF Gift Card', qty:1, price:500000}]},
-        {id:'OD003', customer:'Lê Minh C', date:'2025-10-05', total:850000, status:'Đã giao', products:[{name:'PUBG Account', qty:1, price:850000}]},
-        {id:'OD004', customer:'Phạm D', date:'2025-10-06', total:700000, status:'Hủy', products:[{name:'Liên Minh Huyền Thoại', qty:1, price:700000}]}
-      ]);
-    }
-
-    function renderOrders(list = getOrders()) {
-      const wrap = document.getElementById('orderTableWrap');
-      if (list.length === 0) {
-        wrap.innerHTML = '<p style="color:#94a3b8">Không có đơn hàng nào phù hợp.</p>';
-        return;
-      }
-
-      let html = '<table><thead><tr><th>Mã</th><th>Khách hàng</th><th>Ngày đặt</th><th>Tổng tiền</th><th>Tình trạng</th><th>Thao tác</th></tr></thead><tbody>';
-      list.forEach(o => {
-        let cls = '';
-        if (o.status === 'Mới đặt') cls = 'new';
-        else if (o.status === 'Đã xử lý') cls = 'processing';
-        else if (o.status === 'Đã giao') cls = 'delivered';
-        else cls = 'cancelled';
-
-        html += `<tr>
-          <td>${o.id}</td>
-          <td>${o.customer}</td>
-          <td>${o.date}</td>
-          <td>${o.total.toLocaleString()} ₫</td>
-          <td><span class="status ${cls}">${o.status}</span></td>
-          <td>
-            <button class="edit" onclick="viewDetail('${o.id}')">Xem</button>
-            <button class="delete" onclick="updateStatus('${o.id}')">Cập nhật</button>
-          </td>
-        </tr>`;
-      });
-      html += '</tbody></table>';
-      wrap.innerHTML = html;
-    }
-
-    function filterOrders() {
-      const from = document.getElementById('fromDate').value;
-      const to = document.getElementById('toDate').value;
-      const status = document.getElementById('statusFilter').value;
-      let orders = getOrders();
-
-      if (from) orders = orders.filter(o => o.date >= from);
-      if (to) orders = orders.filter(o => o.date <= to);
-      if (status) orders = orders.filter(o => o.status === status);
-
-      renderOrders(orders);
-    }
-
-    function viewDetail(id) {
-      const order = getOrders().find(o => o.id === id);
-      if (!order) return;
-
-      const details = `
-        <p><strong>Mã đơn:</strong> ${order.id}</p>
-        <p><strong>Khách hàng:</strong> ${order.customer}</p>
-        <p><strong>Ngày đặt:</strong> ${order.date}</p>
-        <p><strong>Tình trạng:</strong> ${order.status}</p>
-        <p><strong>Tổng tiền:</strong> ${order.total.toLocaleString()} ₫</p>
-        <hr>
-        <p><strong>Sản phẩm:</strong></p>
-        <ul>${order.products.map(p => `<li>${p.name} - SL: ${p.qty} - ${p.price.toLocaleString()} ₫</li>`).join('')}</ul>
-      `;
-      document.getElementById('orderDetail').innerHTML = details;
-      document.getElementById('orderModal').style.display = 'flex';
-    }
-
-    function closeModal() {
-      document.getElementById('orderModal').style.display = 'none';
-    }
-
-    function updateStatus(id) {
-      const orders = getOrders();
-      const order = orders.find(o => o.id === id);
-      if (!order) return;
-
-      const newStatus = prompt('Cập nhật tình trạng (Mới đặt, Đã xử lý, Đã giao, Hủy):', order.status);
-      if (!newStatus) return;
-      if (!['Mới đặt','Đã xử lý','Đã giao','Hủy'].includes(newStatus)) {
-        alert('Trạng thái không hợp lệ.');
-        return;
-      }
-      order.status = newStatus;
-      setOrders(orders);
-      renderOrders();
-    }
-
-    renderOrders();
-  </script>
 </body>
 </html>
