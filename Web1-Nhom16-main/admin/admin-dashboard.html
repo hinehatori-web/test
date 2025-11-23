@@ -2,72 +2,329 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bảng điều khiển Admin | AccountShop</title>
-  <link rel="stylesheet" href="style.css">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
   <style>
+    :root {
+      --primary: #00d4ff;
+      --primary-dark: #00a8cc;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --text: #e2e8f0;
+      --text-light: #94a3b8;
+      --sidebar-width: 280px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* Header */
     .admin-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #334155;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 15px 25px;
-      background: #0f172a;
-      color: #e2e8f0;
-      border-bottom: 2px solid #1e293b;
+      justify-content: space-between;
+      padding: 0 30px;
+      z-index: 1000;
     }
 
-    .admin-header img {
-      width: 50px;
-      height: 50px;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .logo i {
+      font-size: 32px;
+      background: linear-gradient(45deg, #00d4ff, #9d4edd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      border: 2px solid #38bdf8;
+      border: 3px solid var(--primary);
       object-fit: cover;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
     }
 
+    .logout-btn {
+      background: linear-gradient(45deg, #ef4444, #dc2626);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+    }
+
+    /* Layout */
     .admin-container {
       display: flex;
-      height: 100vh;
+      margin-top: 70px;
+      min-height: calc(100vh - 70px);
     }
 
-    .dashboard-img {
-      width: 80%;
-      margin-top: 20px;
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 30px 20px;
+      border-right: 1px solid #334155;
+      position: fixed;
+      left: 0;
+      top: 70px;
+      bottom: 0;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      color: var(--primary);
+      margin-bottom: 30px;
+      font-size: 20px;
+      padding-left: 10px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 14px 18px;
+      color: var(--text-light);
+      text-decoration: none;
       border-radius: 12px;
-      box-shadow: 0 0 10px rgba(56,189,248,0.3);
+      margin: 8px 10px;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .sidebar a:hover, .sidebar a.active {
+      background: linear-gradient(90deg, rgba(0, 212, 255, 0.15), transparent);
+      color: var(--primary);
+      transform: translateX(8px);
+      box-shadow: 0 5px 15px rgba(0, 212, 255, 0.2);
+    }
+
+    .sidebar a i {
+      font-size: 20px;
+      width: 30px;
+    }
+
+    /* Main Content */
+    .admin-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: 40px;
+      background: url('https://images.unsplash.com/photo-1614332284894-b30a7eb2c09d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') no-repeat center center;
+      background-size: cover;
+      position: relative;
+    }
+
+    .admin-content::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.92);
+      z-index: 1;
+    }
+
+    .content-wrapper {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+    }
+
+    .welcome-card {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(12px);
+      padding: 40px;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      margin-bottom: 30px;
+    }
+
+    .welcome-card h1 {
+      font-size: 36px;
+      background: linear-gradient(90deg, #00d4ff, #9d4edd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 15px;
+    }
+
+    .welcome-card p {
+      font-size: 18px;
+      color: var(--text-light);
+      line-height: 1.8;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      margin: 40px 0;
+    }
+
+    .stat-card {
+      background: rgba(30, 41, 59, 0.7);
+      padding: 25px;
+      border-radius: 16px;
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      text-align: center;
+      transition: all 0.4s;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+      border-color: var(--primary);
+    }
+
+    .stat-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      background: linear-gradient(45deg, #00d4ff, #9d4edd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      color: var(--text-light);
+      margin-top: 8px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: 0.3s;
+      }
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      .admin-content {
+        margin-left: 0;
+      }
     }
   </style>
 </head>
+<body>
 
-<body class="dark-theme">
-
-  <!-- HEADER -->
+  <!-- Header -->
   <header class="admin-header">
-    <h1><a href="admin-dashboard.html">Accountshop - Quản trị hệ thống</a></li>
+    <a href="admin-dashboard.html" class="logo">
+      <i class="fas fa-gamepad"></i>
+      AccountShop
+    </a>
 
-    <a href="admin.html" class="logout-btn">Đăng xuất</a>
+    <div class="user-info">
+      <img src="https://i.pravatar.cc/150?img=68" alt="Admin" class="avatar">
+      <a href="admin.html" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+      </a>
+    </div>
   </header>
 
-  <!-- LAYOUT -->
+  <!-- Main Layout -->
   <div class="admin-container">
+    <!-- Sidebar -->
     <aside class="sidebar">
-      <h2>Chức năng quản trị</h2>
+      <h2><i class="fas fa-cog"></i> Quản Trị Hệ Thống</h2>
       <ul>
-        <li><a href="user-management.html">👤 Quản lý người dùng</a></li>
-        <li><a href="category-management.html">📂 Quản lý loại sản phẩm</a></li>
-        <li><a href="product-management.html">🛒 Quản lý danh mục sản phẩm</a></li>
-        <li><a href="import-management.html">📦 Nhập sản phẩm</a></li>
-        <li><a href="price-management.html">💰 Quản lý giá bán</a></li>
-        <li><a href="order-management.html">📋 Quản lý đơn hàng</a></li>
-        <li><a href="inventory-management.html">📊 Quản lý tồn kho</a></li>
+        <li><a href="user-management.html" class="active"><i class="fas fa-users"></i> Quản lý người dùng</a></li>
+        <li><a href="category-management.html"><i class="fas fa-folder-open"></i> Quản lý loại sản phẩm</a></li>
+        <li><a href="product-management.html"><i class="fas fa-gamepad"></i> Quản lý tài khoản game</a></li>
+        <li><a href="import-management.html"><i class="fas fa-truck-loading"></i> Nhập sản phẩm</a></li>
+        <li><a href="price-management.html"><i class="fas fa-tags"></i> Quản lý giá bán</a></li>
+        <li><a href="order-management.html"><i class="fas fa-shopping-cart"></i> Quản lý đơn hàng</a></li>
+        <li><a href="inventory-management.html"><i class="fas fa-warehouse"></i> Quản lý tồn kho</a></li>
       </ul>
     </aside>
 
+    <!-- Main Content -->
     <main class="admin-content">
-      <h2>Chào mừng bạn đến với khu vực quản trị!</h2>
-      <p>Chọn một chức năng bên trái để bắt đầu thao tác quản lý hệ thống.</p>
+      <div class="content-wrapper">
+        <div class="welcome-card">
+          <h1>Xin chào Admin! Chào mừng trở lại AccountShop</h1>
+          <p>Quản lý cửa hàng tài khoản game một cách dễ dàng và chuyên nghiệp nhất. Chọn chức năng bên trái để bắt đầu.</p>
+        </div>
 
-      <!-- HÌNH DASHBOARD -->
-      <img src="image/dashboard-banner.jpg" alt="Dashboard" class="dashboard-img">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-number">8,429</div>
+            <div class="stat-label">Tổng người dùng</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-gamepad"></i></div>
+            <div class="stat-number">12,847</div>
+            <div class="stat-label">Tài khoản đang bán</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+            <div class="stat-number">347</div>
+            <div class="stat-label">Đơn hàng hôm nay</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="stat-number">57.2M</div>
+            <div class="stat-label">Doanh thu tháng</div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 
