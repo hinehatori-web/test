@@ -12,7 +12,6 @@
       --success: #10b981;
       --warning: #f59e0b;
       --danger: #ef4444;
-      --low: #fbbf24;
       --bg-dark: #0f172a;
       --bg-card: #1e293b;
       --text: #e2e8f0;
@@ -29,7 +28,7 @@
       min-height: 100vh;
     }
 
-    /* Header & Sidebar (giữ nguyên phong cách đẹp nhất) */
+    /* Header & Sidebar – giống hệt admin-dashboard.html */
     .admin-header {
       position: fixed; top: 0; left: 0; right: 0; height: 70px;
       background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px);
@@ -53,8 +52,8 @@
 
     .content-card {
       background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(12px);
-      border-radius: 20px; padding: 30px; border: 1px solid rgba(0, 212, 255, 0.3);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); margin-bottom: 30px;
+      border-radius: 20px; padding: 30px; border: 1px solid rgba(0,212,255,0.3);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4); margin-bottom: 30px;
     }
 
     .card-title {
@@ -74,28 +73,15 @@
 
     tr:hover td { background: rgba(0, 212, 255, 0.08); transform: scale(1.01); transition: all 0.3s; }
 
-    .stock-good { color: #10b981; font-weight: 700; }
-    .stock-low { color: #fbbf24; font-weight: 700; }
+    .stock-normal { color: #10b981; font-weight: 700; }
+    .stock-low { color: #f59e0b; font-weight: 700; }
     .stock-out { color: #ef4444; font-weight: 700; }
 
-    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .btn { padding: 8px 14px; border: none; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: default; display: inline-flex; align-items: center; gap: 6px; }
-    .btn-view { background: #6366f1; color: white; }
-    .btn-import { background: #06b6d4; color: white; }
-    .btn-warning { background: #f59e0b; color: white; }
-
-    .low-stock-alert {
-      background: rgba(251, 191, 36, 0.15);
-      border-left: 5px solid #fbbf24;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 20px;
+    .warning-box {
+      background: rgba(239, 68, 68, 0.15); border-left: 5px solid #ef4444;
+      padding: 20px; border-radius: 12px; margin-top: 20px;
     }
-
-    .low-stock-alert h3 { color: #fbbf24; margin-bottom: 15px; }
-    .low-stock-alert ul { list-style: none; }
-    .low-stock-alert li { padding: 10px 0; font-size: 16px; }
-    .low-stock-alert .stock-out { color: #ef4444; }
+    .warning-box h4 { color: #fca5a5; margin-bottom: 12px; }
 
     @media (max-width: 992px) {
       .sidebar { transform: translateX(-100%); }
@@ -104,7 +90,6 @@
       th { display: none; }
       td { padding: 15px; border-radius: 12px; margin-bottom: 12px; }
       td:before { content: attr(data-label); font-weight: bold; color: var(--primary); display: block; margin-bottom: 8px; }
-      .actions { justify-content: center; }
     }
   </style>
 </head>
@@ -112,7 +97,7 @@
 
   <header class="admin-header">
     <a href="admin-dashboard.html" class="logo">
-      <i class="fas fa-gamepad"></i> AccountShop
+      AccountShop
     </a>
     <div style="display:flex; align-items:center; gap:20px;">
       <div class="page-title">Quản lý tồn kho</div>
@@ -124,115 +109,94 @@
     <aside class="sidebar">
       <h2>Quản Trị Hệ Thống</h2>
       <ul style="list-style:none;">
-        <li><a href="user-management.html"><i class="fas fa-users"></i> Quản lý người dùng</a></li>
-        <li><a href="category-management.html"><i class="fas fa-folder-open"></i> Quản lý loại sản phẩm</a></li>
-        <li><a href="product-management.html"><i class="fas fa-gamepad"></i> Quản lý tài khoản game</a></li>
-        <li><a href="import-management.html"><i class="fas fa-truck-loading"></i> Nhập sản phẩm</a></li>
-        <li><a href="price-management.html"><i class="fas fa-tags"></i> Quản lý giá bán</a></li>
-        <li><a href="order-management.html"><i class="fas fa-shopping-cart"></i> Quản lý đơn hàng</a></li>
-        <li><a href="inventory-management.html" class="active"><i class="fas fa-warehouse"></i> Quản lý tồn kho</a></li>
+        <li><a href="admin-dashboard.html">Bảng điều khiển</a></li>
+        <li><a href="user-management.html">Quản lý người dùng</a></li>
+        <li><a href="category-management.html">Quản lý loại sản phẩm</a></li>
+        <li><a href="product-management.html">Quản lý danh mục sản phẩm</a></li>
+        <li><a href="import-management.html">Quản lý nhập sản phẩm</a></li>
+        <li><a href="price-management.html">Quản lý giá bán</a></li>
+        <li><a href="order-management.html">Quản lý đơn hàng</a></li>
+        <li><a href="inventory-management.html" class="active">Quản lý tồn kho</a></li>
       </ul>
     </aside>
 
     <main class="admin-content">
-
-      <!-- Tổng quan tồn kho -->
       <div class="content-card">
         <h2 class="card-title">
-          <i class="fas fa-warehouse"></i> Tổng quan tồn kho (Cập nhật 23/11/2025)
+          Tổng quan tồn kho (1.247 sản phẩm)
         </h2>
 
-        <div class="demo-notice">
-          Bản demo tĩnh – dữ liệu mẫu thực tế, có cảnh báo tồn kho + nút hành động. Sẵn sàng tích hợp backend!
         </div>
 
         <table>
           <thead>
             <tr>
               <th>Mã SP</th>
-              <th>Sản phẩm</th>
+              <th>Tên sản phẩm</th>
               <th>Loại</th>
               <th>Đã nhập</th>
               <th>Đã bán</th>
               <th>Tồn kho</th>
               <th>Trạng thái</th>
-              <th style="text-align:center;">Thao tác</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td data-label="Mã">LQ8291</td>
-              <td data-label="Sản phẩm">Liên Quân Rank Kim Cương + 120 Skin</td>
+              <td data-label="Tên">Liên Quân Rank Kim Cương + 120 Skin</td>
               <td data-label="Loại">Liên Quân Mobile</td>
               <td data-label="Nhập">150</td>
-              <td data-label="Bán">142</td>
-              <td data-label="Tồn"><span class="stock-low">8</span></td>
-              <td data-label="Trạng thái"><span class="stock-low">Sắp hết</span></td>
-              <td data-label="Thao tác">
-                <div class="actions">
-                  <button class="btn btn-view"><i class="fas fa-eye"></i> Xem</button>
-                  <button class="btn btn-import"><i class="fas fa-truck"></i> Nhập thêm</button>
-                </div>
-              </td>
+              <td data-label="Bán">98</td>
+              <td data-label="Tồn">52</td>
+              <td data-label="Trạng thái"><span class="stock-normal">Còn hàng</span></td>
             </tr>
             <tr>
               <td data-label="Mã">FF3741</td>
-              <td data-label="Sản phẩm">Free Fire Rank Huyền Thoại 1</td>
+              <td data-label="Tên">Free Fire Rank Huyền Thoại + Full Skin</td>
               <td data-label="Loại">Free Fire</td>
               <td data-label="Nhập">200</td>
-              <td data-label="Bán">185</td>
-              <td data-label="Tồn"><span class="stock-good">15</span></td>
-              <td data-label="Trạng thái"><span class="stock-good">Bình thường</span></td>
-              <td data-label="Thao tác">
-                <div class="actions">
-                  <button class="btn btn-view"><i class="fas fa-eye"></i> Xem</button>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td data-label="Mã">RBX102</td>
-              <td data-label="Sản phẩm">Robux 10.000</td>
-              <td data-label="Loại">Roblox</td>
-              <td data-label="Nhập">50</td>
-              <td data-label="Bán">50</td>
-              <td data-label="Tồn"><span class="stock-out">0</span></td>
-              <td data-label="Trạng thái"><span class="stock-out">Hết hàng</span></td>
-              <td data-label="Thao tác">
-                <div class="actions">
-                  <button class="btn btn-warning"><i class="fas fa-exclamation-triangle"></i> Cảnh báo</button>
-                  <button class="btn btn-import"><i class="fas fa-truck"></i> Nhập gấp</button>
-                </div>
-              </td>
+              <td data-label="Bán">189</td>
+              <td data-label="Tồn">11</td>
+              <td data-label="Trạng thái"><span class="stock-low">Sắp hết (11)</span></td>
             </tr>
             <tr>
               <td data-label="Mã">VAL951</td>
-              <td data-label="Sản phẩm">Valorant Rank Immortal</td>
+              <td data-label="Tên">Valorant Rank Immortal + Skin REAVER</td>
               <td data-label="Loại">Valorant</td>
-              <td data-label="Nhập">30</td>
-              <td data-label="Bán">12</td>
-              <td data-label="Tồn"><span class="stock-good">18</span></td>
-              <td data-label="Trạng thái"><span class="stock-good">Bình thường</span></td>
-              <td data-label="Thao tác">
-                <div class="actions">
-                  <button class="btn btn-view"><i class="fas fa-eye"></i> Xem</button>
-                </div>
-              </td>
+              <td data-label="Nhập">50</td>
+              <td data-label="Bán">50</td>
+              <td data-label="Tồn">0</td>
+              <td data-label="Trạng thái"><span class="stock-out">Hết hàng</span></td>
+            </tr>
+            <tr>
+              <td data-label="Mã">GC500K</td>
+              <td data-label="Tên">Google Play Gift Card 500.000đ</td>
+              <td data-label="Loại">Gift Card</td>
+              <td data-label="Nhập">300</td>
+              <td data-label="Bán">87</td>
+              <td data-label="Tồn">213</td>
+              <td data-label="Trạng thái"><span class="stock-normal">Còn nhiều</span></td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- Cảnh báo tồn kho thấp -->
-      <div class="content-card low-stock-alert">
-        <h3><i class="fas fa-exclamation-triangle"></i> Cảnh báo: Sản phẩm sắp hết hoặc đã hết hàng (4 sản phẩm)</h3>
-        <ul>
-          <li>Liên Quân Rank Kim Cương + 120 Skin – <strong class="stock-low">Còn 8</strong></li>
-          <li>Free Fire Rank Huyền Thoại 2 – <strong class="stock-low">Còn 5</strong></li>
-          <li>Robux 10.000 – <strong class="stock-out">Đã hết (0)</strong></li>
-          <li>GiftCard Google Play 500k – <strong class="stock-low">Còn 3</strong></li>
-        </ul>
+      <!-- Cảnh báo sản phẩm sắp hết -->
+      <div class="content-card">
+        <h2 class="card-title">
+          Cảnh báo tồn kho thấp (8 sản phẩm cần nhập gấp)
+        </h2>
+        <div class="warning-box">
+          <h4>Danh sách sản phẩm sắp hết hàng:</h4>
+          <ul style="margin: 15px 0; padding-left: 20px; line-height: 2;">
+            <li><strong>FF Rank Huyền Thoại</strong> – Còn lại: <span class="stock-low">11 sản phẩm</span></li>
+            <li><strong>Valorant Rank Radiant</strong> – Còn lại: <span class="stock-low">3 sản phẩm</span></li>
+            <li><strong>LQ Skin VIP Pack</strong> – Còn lại: <span class="stock-low">7 sản phẩm</span></li>
+            <li><strong>Robux 10.000</strong> – Còn lại: <span class="stock-low">5 sản phẩm</span></li>
+          </ul>
+          <p style="color:#fca5a5; font-size:14px;">Vui lòng nhập hàng mới trong vòng 24h tới để tránh gián đoạn bán hàng!</p>
+        </div>
       </div>
-
     </main>
   </div>
 
