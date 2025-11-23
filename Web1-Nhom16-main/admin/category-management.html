@@ -2,217 +2,354 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Quản lý loại sản phẩm</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý loại sản phẩm | AccountShop Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
   <style>
+    :root {
+      --primary: #00d4ff;
+      --primary-dark: #0099cc;
+      --danger: #ef4444;
+      --success: #10b981;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --text: #e2e8f0;
+      --text-light: #94a3b8;
+      --border: #334155;
+      --sidebar-width: 280px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #0f1724;
-      color: #e2e8f0;
-      margin: 0;
-      padding: 24px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      color: var(--text);
+      min-height: 100vh;
     }
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
+
+    /* Header */
+    .admin-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 70px;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      z-index: 1000;
     }
-    h1 {
-      color: #38bdf8;
-      font-size: 22px;
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
     }
-    .card {
-      background: rgba(255,255,255,0.04);
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+
+    .logo i {
+      font-size: 34px;
+      background: linear-gradient(45deg, #00d4ff, #9d4edd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    input, textarea, select {
-      background: rgba(255,255,255,0.05);
-      color: #e2e8f0;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px;
-      padding: 8px;
-      width: 100%;
-      outline: none;
+
+    .page-title {
+      font-size: 20px;
+      color: var(--text-light);
     }
-    button {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+
+    .back-btn {
+      background: rgba(0, 212, 255, 0.15);
+      color: var(--primary);
+      padding: 10px 24px;
+      border-radius: 50px;
+      text-decoration: none;
       font-weight: 600;
+      transition: all 0.3s;
+      border: 1px solid rgba(0, 212, 255, 0.3);
     }
-    button.add {
-      background: #06b6d4;
-      color: #041324;
+
+    .back-btn:hover {
+      background: var(--primary);
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
     }
-    button.edit { background: #1e3a8a; color: #e0f2fe; }
-    button.delete { background: #dc2626; color: white; }
-    button.toggle { background: #475569; color: white; }
-    button.reset { background: transparent; border: 1px solid #475569; color: #94a3b8; }
+
+    /* Layout */
+    .admin-container {
+      display: flex;
+      margin-top: 70px;
+      min-height: calc(100vh - 70px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 30px 20px;
+      border-right: 1px solid var(--border);
+      position: fixed;
+      left: 0;
+      top: 70px;
+      bottom: 0;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      color: var(--primary);
+      margin-bottom: 30px;
+      font-size: 20px;
+      padding-left: 10px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 14px 18px;
+      color: var(--text-light);
+      text-decoration: none;
+      border-radius: 12px;
+      margin: 8px 10px;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .sidebar a:hover, .sidebar a.active {
+      background: linear-gradient(90deg, rgba(0, 212, 255, 0.15), transparent);
+      color: var(--primary);
+      transform: translateX(8px);
+    }
+
+    .sidebar a i { font-size: 20px; width: 30px; }
+
+    /* Main Content */
+    .admin-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: 40px;
+    }
+
+    .content-card {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 30px;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      margin-bottom: 30px;
+    }
+
+    .card-title {
+      font-size: 26px;
+      background: linear-gradient(90deg, #00d4ff, #9d4edd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .demo-notice {
+      background: rgba(251, 191, 36, 0.15);
+      color: #fbbf24;
+      padding: 16px;
+      border-radius: 12px;
+      border-left: 4px solid #fbbf24;
+      font-size: 15px;
+      margin-bottom: 25px;
+    }
+
     table {
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 16px;
+      border-collapse: separate;
+      border-spacing: 0 12px;
+      margin-top: 10px;
     }
-    th, td {
+
+    th {
+      background: rgba(0, 212, 255, 0.1);
+      padding: 18px 20px;
       text-align: left;
-      padding: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 15px;
     }
-    th { color: #94a3b8; font-size: 14px; }
-    td small { color: #94a3b8; }
-    .hidden { opacity: 0.5; text-decoration: line-through; }
-    .actions button {
-      margin-right: 6px;
-      font-size: 13px;
+
+    td {
+      background: rgba(15, 23, 42, 0.6);
+      padding: 18px 20px;
+      border-radius: 12px;
     }
+
+    tr:hover td {
+      background: rgba(0, 212, 255, 0.08);
+      transform: scale(1.01);
+      transition: all 0.3s;
+    }
+
     .status {
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
       display: inline-block;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      font-size: 12px;
+    }
+
+    .status-active {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-hidden {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .game-icon {
+      font-size: 20px;
+      margin-right: 8px;
+    }
+
+    .category-name {
+      font-weight: 600;
+      font-size: 17px;
+      color: var(--primary);
+    }
+
+    @media (max-width: 992px) {
+      .sidebar { transform: translateX(-100%); }
+      .admin-content { margin-left: 0; padding: 20px; }
+      table, thead, tbody, th, td, tr { display: block; }
+      th { display: none; }
+      td { padding: 15px; border-radius: 12px; margin-bottom: 12px; }
+      td:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: var(--primary);
+        display: block;
+        margin-bottom: 8px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Quản lý loại sản phẩm</h1>
-    <a href="admin-dashboard" class="back-home-btn">⬅ Trở về trang chủ</a>
-    <div class="card">
-      <h3>Thêm / Sửa loại sản phẩm</h3>
-      <div>
-        <label for="catName">Tên loại sản phẩm</label>
-        <input type="text" id="catName" placeholder="Ví dụ: LQ, FF, GiftCard..." />
-      </div>
-      <div style="margin-top:10px">
-        <label for="catDesc">Mô tả</label>
-        <textarea id="catDesc" rows="3" placeholder="Mô tả ngắn gọn về loại sản phẩm"></textarea>
-      </div>
-      <div style="margin-top:10px;display:flex;gap:8px">
-        <button id="btnSave" class="add">Lưu</button>
-        <button id="btnReset" class="reset">Xóa form</button>
-      </div>
-      <small id="formMsg" style="display:block;margin-top:8px;color:#94a3b8">Dữ liệu được lưu tạm trong LocalStorage (chỉ demo).</small>
-    </div>
 
-    <div class="card">
-      <h3>Danh sách loại sản phẩm</h3>
-      <div id="catTableWrap"></div>
+  <!-- Header -->
+  <header class="admin-header">
+    <a href="admin-dashboard.html" class="logo">
+      <i class="fas fa-gamepad"></i> AccountShop
+    </a>
+    <div style="display:flex; align-items:center; gap:20px;">
+      <div class="page-title">Quản lý loại sản phẩm</div>
+      <a href="admin-dashboard.html" class="back-btn">
+        Trở về Dashboard
+      </a>
     </div>
+  </header>
+
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>Quản Trị Hệ Thống</h2>
+      <ul style="list-style:none;">
+        <li><a href="user-management.html"><i class="fas fa-users"></i> Quản lý người dùng</a></li>
+        <li><a href="category-management.html" class="active"><i class="fas fa-folder-open"></i> Quản lý loại sản phẩm</a></li>
+        <li><a href="product-management.html"><i class="fas fa-gamepad"></i> Quản lý tài khoản game</a></li>
+        <li><a href="import-management.html"><i class="fas fa-truck-loading"></i> Nhập sản phẩm</a></li>
+        <li><a href="price-management.html"><i class="fas fa-tags"></i> Quản lý giá bán</a></li>
+        <li><a href="order-management.html"><i class="fas fa-shopping-cart"></i> Quản lý đơn hàng</a></li>
+        <li><a href="inventory-management.html"><i class="fas fa-warehouse"></i> Quản lý tồn kho</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-content">
+      <div class="content-card">
+        <h2 class="card-title">
+          Danh sách loại sản phẩm (24 loại)
+        </h2>
+
+        <div class="demo-notice">
+          Đây là bản demo tĩnh (không dùng JavaScript). Dữ liệu mẫu được hard-code để bạn xem giao diện thực tế.
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Tên loại sản phẩm</th>
+              <th>Mô tả</th>
+              <th>Số tài khoản</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="Loại"><span class="category-name"><i class="fas fa-mobile-alt game-icon"></i> Liên Quân Mobile</span></td>
+              <td data-label="Mô tả">Tài khoản Liên Quân rank Cao Thủ trở lên, skin đẹp</td>
+              <td data-label="Số tài khoản">1,284 tài khoản</td>
+              <td data-label="Trạng thái"><span class="status status-active">Hiển thị</span></td>
+            </tr>
+            <tr>
+              <td data-label="Loại"><span class="category-name"><i class="fas fa-fire game-icon"></i> Free Fire</span></td>
+              <td data-label="Mô tả">Acc FF full skin, rank Kim Cương - Huyền Thoại</td>
+              <td data-label="Số tài khoản">2,157 tài khoản</td>
+              <td data-label="Trạng thái"><span class="status status-active">Hiển thị</span></td>
+            </tr>
+            <tr>
+              <td data-label="Loại"><span class="category-name"><i class="fas fa-gem game-icon"></i> Roblox Robux</span></td>
+              <td data-label="Mô tả">Gói Robux giá rẻ, nạp trực tiếp</td>
+              <td data-label="Số tài khoản">892 gói</td>
+              <td data-label="Trạng thái"><span class="status status-active">Hiển thị</span></td>
+            </tr>
+            <tr>
+              <td data-label="Loại"><span class="category-name"><i class="fas fa-credit-card game-icon"></i> Gift Card Google Play</span></td>
+              <td data-label="Mô tả">Thẻ Google Play 100k - 500k - 1 triệu</td>
+              <td data-label="Số tài khoản">567 thẻ</td>
+              <td data-label="Trạng thái"><span class="status status-active">Hiển thị</span></td>
+            </tr>
+            <tr>
+              <td data-label="Loại"><span class="category-name"><i class="fas fa-shield-alt game-icon"></i> Valorant</span></td>
+              <td data-label="Mô tả">Acc Valorant rank Immortal, Radiant</td>
+              <td data-label="Số tài khoản">318 tài khoản</td>
+              <td data-label="Trạng thái"><span class="status status-hidden">Đã ẩn</span></td>
+            </tr>
+            <tr>
+              <td data-label="Loại"><span class="category-name"><i class="fas fa-fist-raised game-icon"></i> Liên Minh Huyền Thoại</span></td>
+              <td data-label="Mô tả">Acc LMHT rank Kim Cương trở lên</td>
+              <td data-label="Số tài khoản">742 tài khoản</td>
+              <td data-label="Trạng thái"><span class="status status-active">Hiển thị</span></td>
+            </tr>
+            <tr>
+              <td data-label="Loại"><span class="category-name"><i class="fas fa-dragon game-icon"></i> Genshin Impact</span></td>
+              <td data-label="Mô tả">Acc Genshin AR 55+, có 5★</td>
+              <td data-label="Số tài khoản">1,029 tài khoản</td>
+              <td data-label="Trạng thái"><span class="status status-active">Hiển thị</span></td>
+            </tr>
+            <tr>
+              <td data-label="Loại"><span class="category-name"><i class="fas fa-apple-alt game-icon"></i> Apple ID Việt Nam</span></td>
+              <td data-label="Mô tả">Tạo Apple ID VN, dùng App Store VN</td>
+              <td data-label="Số tài khoản">456 tài khoản</td>
+              <td data-label="Trạng thái"><span class="status status-active">Hiển thị</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
   </div>
 
-  <script>
-    const LS_KEY = 'PRODUCT_CATEGORIES';
-
-    function getCats() {
-      try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; }
-      catch { return []; }
-    }
-    function setCats(data) { localStorage.setItem(LS_KEY, JSON.stringify(data)); }
-    function genId() { return 'c' + Math.random().toString(36).substr(2, 8); }
-
-    function renderTable() {
-      const cats = getCats();
-      const wrap = document.getElementById('catTableWrap');
-      if (cats.length === 0) {
-        wrap.innerHTML = '<p style="color:#94a3b8">Chưa có loại sản phẩm nào. Hãy thêm mới ở trên.</p>';
-        return;
-      }
-
-      let html = '<table><thead><tr><th>Tên loại</th><th>Mô tả</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>';
-      cats.forEach(cat => {
-        html += `<tr class="${cat.hidden ? 'hidden' : ''}">
-          <td><strong>${escapeHtml(cat.name)}</strong></td>
-          <td>${escapeHtml(cat.desc || '')}</td>
-          <td><span class="status">${cat.hidden ? 'Đã ẩn' : 'Hiển thị'}</span></td>
-          <td class="actions">
-            <button class="edit" onclick="editCat('${cat.id}')">Sửa</button>
-            <button class="delete" onclick="deleteCat('${cat.id}')">Xóa</button>
-            <button class="toggle" onclick="toggleCat('${cat.id}')">${cat.hidden ? 'Hiện' : 'Ẩn'}</button>
-          </td>
-        </tr>`;
-      });
-      html += '</tbody></table>';
-      wrap.innerHTML = html;
-    }
-
-    function escapeHtml(s) {
-      return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
-    }
-
-    document.getElementById('btnSave').addEventListener('click', () => {
-      const name = document.getElementById('catName').value.trim();
-      const desc = document.getElementById('catDesc').value.trim();
-      if (!name) return alert('Tên loại sản phẩm không được để trống!');
-
-      let cats = getCats();
-      const editId = document.getElementById('btnSave').dataset.editId;
-
-      if (editId) {
-        const c = cats.find(x => x.id === editId);
-        if (!c) return alert('Không tìm thấy loại sản phẩm!');
-        c.name = name;
-        c.desc = desc;
-        setCats(cats);
-        document.getElementById('formMsg').innerText = 'Đã cập nhật loại sản phẩm.';
-        delete document.getElementById('btnSave').dataset.editId;
-      } else {
-        const newCat = {
-          id: genId(),
-          name,
-          desc,
-          hidden: false,
-          createdAt: new Date().toISOString()
-        };
-        cats.unshift(newCat);
-        setCats(cats);
-        document.getElementById('formMsg').innerText = 'Đã thêm loại sản phẩm mới.';
-      }
-
-      resetForm();
-      renderTable();
-    });
-
-    function editCat(id) {
-      const cats = getCats();
-      const c = cats.find(x => x.id === id);
-      if (!c) return;
-      document.getElementById('catName').value = c.name;
-      document.getElementById('catDesc').value = c.desc;
-      document.getElementById('btnSave').dataset.editId = id;
-      document.getElementById('formMsg').innerText = 'Đang sửa loại sản phẩm: ' + c.name;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function deleteCat(id) {
-      if (!confirm('Bạn có chắc muốn xóa loại sản phẩm này?')) return;
-      let cats = getCats();
-      cats = cats.filter(x => x.id !== id);
-      setCats(cats);
-      renderTable();
-    }
-
-    function toggleCat(id) {
-      let cats = getCats();
-      const c = cats.find(x => x.id === id);
-      if (!c) return;
-      c.hidden = !c.hidden;
-      setCats(cats);
-      renderTable();
-    }
-
-    document.getElementById('btnReset').addEventListener('click', resetForm);
-    function resetForm() {
-      document.getElementById('catName').value = '';
-      document.getElementById('catDesc').value = '';
-      document.getElementById('formMsg').innerText = 'Dữ liệu được lưu tạm trong LocalStorage (chỉ demo).';
-      delete document.getElementById('btnSave').dataset.editId;
-    }
-
-    renderTable();
-  </script>
 </body>
 </html>
