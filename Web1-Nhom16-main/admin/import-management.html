@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nhập sản phẩm | AccountShop Admin</title>
+  <title>Quản lý nhập sản phẩm | AccountShop Admin</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   
   <style>
     :root {
       --primary: #00d4ff;
-      --primary-dark: #0099cc;
+      --primary-dark: #00a8cc;
+      --danger: #ef4444;
       --success: #10b981;
       --warning: #f59e0b;
-      --danger: #ef4444;
       --bg-dark: #0f172a;
       --bg-card: #1e293b;
       --text: #e2e8f0;
@@ -35,7 +35,7 @@
       top: 0; left: 0; right: 0;
       height: 70px;
       background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -48,37 +48,39 @@
       display: flex;
       align-items: center;
       gap: 15px;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 700;
       color: var(--primary);
       text-decoration: none;
     }
 
     .logo i {
-      font-size: 34px;
+      font-size: 32px;
       background: linear-gradient(45deg, #00d4ff, #9d4edd);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .page-title { font-size: 20px; color: var(--text-light); }
+    .page-title {
+      font-size: 20px;
+      color: var(--text-light);
+    }
 
     .back-btn {
-      background: rgba(0, 212, 255, 0.15);
-      color: var(--primary);
-      padding: 10px 24px;
+      background: rgba(255,255,255,0.1);
+      color: var(--text);
+      padding: 10px 20px;
       border-radius: 50px;
       text-decoration: none;
-      font-weight: 600;
-      border: 1px solid rgba(0, 212, 255, 0.3);
+      font-weight: 500;
       transition: all 0.3s;
+      backdrop-filter: blur(10px);
     }
 
     .back-btn:hover {
       background: var(--primary);
       color: #000;
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
     }
 
     /* Layout */
@@ -136,6 +138,8 @@
       flex: 1;
       margin-left: var(--sidebar-width);
       padding: 40px;
+      position: relative;
+      z-index: 1;
     }
 
     .content-card {
@@ -149,7 +153,7 @@
     }
 
     .card-title {
-      font-size: 26px;
+      font-size: 24px;
       background: linear-gradient(90deg, #00d4ff, #9d4edd);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -159,80 +163,132 @@
       gap: 12px;
     }
 
-    .demo-notice {
-      background: rgba(251, 191, 36, 0.15);
-      color: #fbbf24;
-      padding: 16px;
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 14px;
       border-radius: 12px;
-      border-left: 4px solid #fbbf24;
-      font-size: 15px;
-      margin-bottom: 25px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, #00d4ff, #0099cc);
+      color: #000;
+    }
+
+    .btn-reset {
+      background: transparent;
+      border: 1px solid var(--text-light);
+      color: var(--text-light);
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+
+    .status {
+      padding: 6px 12px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+    }
+
+    .status-hidden {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
     }
 
     table {
       width: 100%;
-      border-collapse: separate;
-      border-spacing: 0 12px;
-      margin-top: 10px;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 16px;
+      overflow: hidden;
     }
 
     th {
       background: rgba(0, 212, 255, 0.1);
-      padding: 18px 20px;
+      padding: 16px;
       text-align: left;
       color: var(--primary);
       font-weight: 600;
-      font-size: 15px;
     }
 
     td {
-      background: rgba(15, 23, 42, 0.6);
-      padding: 18px 20px;
-      border-radius: 12px;
+      padding: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
     }
 
-    tr:hover td {
-      background: rgba(0, 212, 255, 0.08);
-      transform: scale(1.01);
-      transition: all 0.3s;
+    tr:hover {
+      background: rgba(0, 212, 255, 0.05);
     }
 
-    .status {
-      padding: 8px 16px;
-      border-radius: 50px;
-      font-size: 13px;
-      font-weight: 600;
-      display: inline-block;
+    .hidden-row {
+      opacity: 0.5;
+      text-decoration: line-through;
+      background: rgba(239, 68, 68, 0.05) !important;
     }
 
-    .status-completed {
-      background: rgba(16, 185, 129, 0.2);
-      color: #10b981;
-      border: 1px solid rgba(16, 185, 129, 0.3);
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-light);
     }
 
-    .status-pending {
-      background: rgba(245, 158, 11, 0.2);
-      color: #f59e0b;
-      border: 1px solid rgba(245, 158, 11, 0.3);
+    .empty-state i {
+      font-size: 64px;
+      margin-bottom: 20px;
+      opacity: 0.3;
     }
-
-    .price { font-weight: 600; color: #00d4ff; }
-    .qty { font-weight: 600; color: #a78bfa; }
 
     @media (max-width: 992px) {
       .sidebar { transform: translateX(-100%); }
-      .admin-content { margin-left: 0; padding: 20px; }
-      table, thead, tbody, th, td, tr { display: block; }
-      th { display: none; }
-      td { padding: 15px; border-radius: 12px; margin-bottom: 12px; }
-      td:before {
-        content: attr(data-label);
-        font-weight: bold;
-        color: var(--primary);
-        display: block;
-        margin-bottom: 8px;
-      }
+      .admin-content { margin-left: 0; }
     }
   </style>
 </head>
@@ -241,10 +297,11 @@
   <!-- Header -->
   <header class="admin-header">
     <a href="admin-dashboard.html" class="logo">
-      <i class="fas fa-gamepad"></i> AccountShop
+      <i class="fas fa-gamepad"></i>
+      AccountShop
     </a>
     <div style="display:flex; align-items:center; gap:20px;">
-      <div class="page-title">Nhập sản phẩm mới</div>
+      <div class="page-title">Quản lý loại sản phẩm</div>
       <a href="admin-dashboard.html" class="back-btn">
         Trở về Dashboard
       </a>
@@ -254,12 +311,12 @@
   <div class="admin-container">
     <!-- Sidebar -->
     <aside class="sidebar">
-      <h2>Quản Trị Hệ Thống</h2>
-      <ul style="list-style:none;">
+      <h2><i class="fas fa-cog"></i> Quản Trị Hệ Thống</h2>
+      <ul>
         <li><a href="user-management.html"><i class="fas fa-users"></i> Quản lý người dùng</a></li>
-        <li><a href="category-management.html"><i class="fas fa-folder-open"></i> Quản lý loại sản phẩm</a></li>
+        <li><a href="category-management.html" class="active"><i class="fas fa-folder-open"></i> Quản lý nhập sản phẩm</a></li>
         <li><a href="product-management.html"><i class="fas fa-gamepad"></i> Quản lý tài khoản game</a></li>
-        <li><a href="import-management.html" class="active"><i class="fas fa-truck-loading"></i> Nhập sản phẩm</a></li>
+        <li><a href="import-management.html"><i class="fas fa-truck-loading"></i> Nhập sản phẩm</a></li>
         <li><a href="price-management.html"><i class="fas fa-tags"></i> Quản lý giá bán</a></li>
         <li><a href="order-management.html"><i class="fas fa-shopping-cart"></i> Quản lý đơn hàng</a></li>
         <li><a href="inventory-management.html"><i class="fas fa-warehouse"></i> Quản lý tồn kho</a></li>
@@ -270,81 +327,107 @@
     <main class="admin-content">
       <div class="content-card">
         <h2 class="card-title">
-          <i class="fas fa-truck-loading"></i> Danh sách phiếu nhập hàng (32 phiếu gần nhất)
+          <i class="fas fa-folder-open"></i> Thêm / Sửa loại sản phẩm
         </h2>
-
+        <div class="form-group">
+          <label for="catName">Tên loại sản phẩm</label>
+          <input type="text" id="catName" placeholder="VD: Liên Quân, Free Fire, GiftCard, Roblox..." />
+        </div>
+        <div class="form-group">
+          <label for="catDesc">Mô tả ngắn</label>
+          <textarea id="catDesc" rows="3" placeholder="Mô tả ngắn gọn về loại sản phẩm này..."></textarea>
+        </div>
+        <div class="btn-group">
+          <button id="btnSave" class="btn-primary">
+            Lưu loại sản phẩm
+          </button>
+          <button id="btnReset" class="btn-reset">
+            Xóa form
+          </button>
+        </div>
+        <div style="margin-top:15px; color:#94a3b8; font-size:14px;">
 
         </div>
+      </div>
 
-        <table>
-          <thead>
-            <tr>
-              <th>Mã phiếu</th>
-              <th>Ngày nhập</th>
-              <th>Sản phẩm</th>
-              <th>Giá nhập</th>
-              <th>Số lượng</th>
-              <th>Tổng tiền</th>
-              <th>Trạng thái</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td data-label="Mã">IM8F2K</td>
-              <td data-label="Ngày">23/11/2025</td>
-              <td data-label="Sản phẩm">Free Fire Rank Huyền Thoại 1</td>
-              <td data-label="Giá nhập"><span class="price">420,000 ₫</span></td>
-              <td data-label="Số lượng"><span class="qty">15</span></td>
-              <td data-label="Tổng"><strong>6,300,000 ₫</strong></td>
-              <td data-label="Trạng thái"><span class="status status-completed">Hoàn thành</span></td>
-            </tr>
-            <tr>
-              <td data-label="Mã">IM7X9P</td>
-              <td data-label="Ngày">22/11/2025</td>
-              <td data-label="Sản phẩm">Liên Quân Rank Kim Cương + 120 skin</td>
-              <td data-label="Giá nhập"><span class="price">580,000 ₫</span></td>
-              <td data-label="Số lượng"><span class="qty">8</span></td>
-              <td data-label="Tổng"><strong>4,640,000 ₫</strong></td>
-              <td data-label="Trạng thái"><span class="status status-completed">Hoàn thành</span></td>
-            </tr>
-            <tr>
-              <td data-label="Mã">IM6M4Q</td>
-              <td data-label="Ngày">21/11/2025</td>
-              <td data-label="Sản phẩm">Robux 10.000</td>
-              <td data-label="Giá nhập"><span class="price">1,850,000 ₫</span></td>
-              <td data-label="Số lượng"><span class="qty">20</span></td>
-              <td data-label="Tổng"><strong>37,000,000 ₫</strong></td>
-              <td data-label="Trạng thái"><span class="status status-pending">Chưa hoàn thành</span></td>
-            </tr>
-            <tr>
-              <td data-label="Mã">IM5J1R</td>
-              <td data-label="Ngày">20/11/2025</td>
-              <td data-label="Sản phẩm">Valorant Rank Immortal</td>
-              <td data-label="Giá nhập"><span class="price">1,200,000 ₫</span></td>
-              <td data-label="Số lượng"><span class="qty">5</span></td>
-              <td data-label="Tổng"><strong>6,000,000 ₫</strong></td>
-              <td data-label="Trạng thái"><span class="status status-completed">Hoàn thành</span></td>
-            </tr>
-            <tr>
-              <td data-label="Mã">IM4H8T</td>
-              <td data-label="Ngày">19/11/2025</td>
-              <td data-label="Sản phẩm">GiftCard Google Play 500k</td>
-              <td data-label="Giá nhập"><span class="price">460,000 ₫</span></td>
-              <td data-label="Số lượng"><span class="qty">50</span></td>
-              <td data-label="Tổng"><strong>23,000,000 ₫</strong></td>
-              <td data-label="Trạng thái"><span class="status status-completed">Hoàn thành</span></td>
-            </tr>
-            <tr>
-              <td data-label="Mã">IM3G5U</td>
-              <td data-label="Ngày">18/11/2025</td>
-              <td data-label="Sản phẩm">Genshin Impact AR57 + C6 Raiden</td>
-              <td data-label="Giá nhập"><span class="price">3,800,000 ₫</span></td>
-              <td data-label="Số lượng"><span class="qty">3</span></td>
-              <td data-label="Tổng"><strong>11,400,000 ₫</strong></td>
-              <td data-label="Trạng thái"><span class="status status-pending">Chưa hoàn thành</span></td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="content-card">
+        <h2 class="card-title">
+          <i class="fas fa-list"></i> Danh sách loại sản phẩm
+        </h2>
+        <div id="catTableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Tên loại</th>
+                <th>Mô tả</th>
+                <th>Trạng thái</th>
+                <th width="280">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Liên Quân Mobile</strong></td>
+                <td>Tài khoản Liên Quân rank Cao Thủ trở lên, skin đẹp</td>
+                <td><span class="status status-active">Hiển thị</span></td>
+                <td>
+                  <button class="btn-edit" onclick="editCat('1')">Sửa</button>
+                  <button class="btn-delete" onclick="deleteCat('1')">Xóa</button>
+                  <button class="btn-toggle" onclick="toggleCat('1')">
+                    Ẩn
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Free Fire</strong></td>
+                <td>Acc FF full skin, rank Kim Cương - Huyền Thoại</td>
+                <td><span class="status status-active">Hiển thị</span></td>
+                <td>
+                  <button class="btn-edit" onclick="editCat('2')">Sửa</button>
+                  <button class="btn-delete" onclick="deleteCat('2')">Xóa</button>
+                  <button class="btn-toggle" onclick="toggleCat('2')">
+                    Ẩn
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Roblox Robux</strong></td>
+                <td>Gói Robux giá rẻ, nạp trực tiếp</td>
+                <td><span class="status status-active">Hiển thị</span></td>
+                <td>
+                  <button class="btn-edit" onclick="editCat('3')">Sửa</button>
+                  <button class="btn-delete" onclick="deleteCat('3')">Xóa</button>
+                  <button class="btn-toggle" onclick="toggleCat('3')">
+                    Ẩn
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Gift Card Google Play</strong></td>
+                <td>Thẻ Google Play 100k - 500k - 1 triệu</td>
+                <td><span class="status status-active">Hiển thị</span></td>
+                <td>
+                  <button class="btn-edit" onclick="editCat('4')">Sửa</button>
+                  <button class="btn-delete" onclick="deleteCat('4')">Xóa</button>
+                  <button class="btn-toggle" onclick="toggleCat('4')">
+                    Ẩn
+                  </button>
+                </td>
+              </tr>
+              <tr class="hidden-row">
+                <td><strong>Valorant</strong></td>
+                <td>Acc Valorant rank Immortal, Radiant</td>
+                <td><span class="status status-hidden">Đã ẩn</span></td>
+                <td>
+                  <button class="btn-edit" onclick="editCat('5')">Sửa</button>
+                  <button class="btn-delete" onclick="deleteCat('5')">Xóa</button>
+                  <button class="btn-toggle" onclick="toggleCat('5')">
+                    Hiện
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </main>
   </div>
