@@ -1,278 +1,219 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Quản lý người dùng — AccountShop (Prototype)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý người dùng | AccountShop Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
   <style>
     :root {
-      --bg: #0f1724;
-      --card: #0b1220;
-      --muted: #94a3b8;
-      --accent: #06b6d4;
-      --danger: #ef4444;
+      --primary: #00d4ff;
       --success: #10b981;
-      --glass: rgba(255,255,255,0.03);
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --text: #e2e8f0;
+      --text-light: #94a3b8;
+      --border: #334155;
+      --sidebar-width: 280px;
     }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;background:linear-gradient(180deg,#071029 0%, #0b1220 100%);color:#e6eef8;padding:28px}
-    .wrap{max-width:1100px;margin:0 auto}
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-    h1{font-size:20px;margin:0}
-    .top-actions{display:flex;gap:8px;align-items:center}
-    input[type="text"], input[type="email"], input[type="password"], select {
-      background:var(--glass); border:1px solid rgba(255,255,255,0.04); color:var(--muted); padding:10px;border-radius:8px; outline:none;
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      color: var(--text);
+      min-height: 100vh;
     }
-    button{background:var(--accent);border:none;color:#041324;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600}
-    button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-    button.danger{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--danger)}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:14px;border-radius:12px;box-shadow:0 6px 30px rgba(2,6,23,0.6)}
-    .grid{display:grid;grid-template-columns:1fr 360px;gap:12px}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:10px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03);font-size:14px;color:#dbeafe}
-    th{color:var(--muted);font-weight:600;font-size:13px}
-    .small{font-size:13px;color:var(--muted)}
-    .badge{display:inline-block;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.03);font-size:13px}
-    .btn-sm{padding:6px 8px;border-radius:8px;font-size:13px;cursor:pointer}
-    .btn-lock{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-    .btn-reset{background:#1f2937;color:#c7f9ff}
-    .muted{color:var(--muted)}
-    .form-row{display:flex;gap:8px;margin-bottom:8px}
-    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
-    .notice{padding:10px;border-radius:8px;background:linear-gradient(180deg, rgba(6,182,212,0.06), rgba(6,182,212,0.02));color:#cfeff6;margin-bottom:10px}
-    .center{text-align:center}
-    .flex{display:flex;gap:8px;align-items:center}
-    .search{width:320px}
-    .tiny{font-size:12px;padding:4px 6px}
-    .locked{opacity:0.6;text-decoration:line-through}
+
+    /* Header & Sidebar – giống hệt 7 trang trước */
+    .admin-header {
+      position: fixed; top: 0; left: 0; right: 0; height: 70px;
+      background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); display: flex;
+      align-items: center; justify-content: space-between; padding: 0 30px; z-index: 1000;
+    }
+    .logo { display: flex; align-items: center; gap: 15px; font-size: 26px; font-weight: 700; color: var(--primary); text-decoration: none; }
+    .logo i { font-size: 34px; background: linear-gradient(45deg, #00d4ff, #9d4edd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .page-title { font-size: 20px; color: var(--text-light); }
+    .back-btn { background: rgba(0, 212, 255, 0.15); color: var(--primary); padding: 10px 24px; border-radius: 50px; text-decoration: none; font-weight: 600; border: 1px solid rgba(0, 212, 255, 0.3); transition: all 0.3s; }
+    .back-btn:hover { background: var(--primary); color: #000; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3); }
+
+    .admin-container { display: flex; margin-top: 70px; min-height: calc(100vh - 70px); }
+    .sidebar { width: var(--sidebar-width); background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(10px); padding: 30px 20px; border-right: 1px solid var(--border); position: fixed; left: 0; top: 70px; bottom: 0; overflow-y: auto; }
+    .sidebar h2 { color: var(--primary); margin-bottom: 30px; font-size: 20px; padding-left: 10px; border-left: 4px solid var(--primary); }
+    .sidebar a { display: flex; align-items: center; gap: 15px; padding: 14px 18px; color: var(--text-light); text-decoration: none; border-radius: 12px; margin: 8px 10px; transition: all 0.3s; font-weight: 500; }
+    .sidebar a:hover, .sidebar a.active { background: linear-gradient(90deg, rgba(0, 212, 255, 0.15), transparent); color: var(--primary); transform: translateX(8px); }
+    .sidebar a i { font-size: 20px; width: 30px; }
+
+    .admin-content { flex: 1; margin-left: var(--sidebar-width); padding: 40px; }
+
+    .content-card {
+      background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(12px);
+      border-radius: 20px; padding: 30px; border: 1px solid rgba(0, 212, 255, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); margin-bottom: 30px;
+    }
+
+    .card-title {
+      font-size: 26px; background: linear-gradient(90deg, #00d4ff, #9d4edd);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
+    }
+
+    .demo-notice {
+      background: rgba(251, 191, 36, 0.15); color: #fbbf24; padding: 16px;
+      border-radius: 12px; border-left: 4px solid #fbbf24; font-size: 15px; margin-bottom: 25px;
+    }
+
+    table { width: 100%; border-collapse: separate; border-spacing: 0 12px; margin-top: 10px; }
+    th { background: rgba(0, 212, 255, 0.1); padding: 18px 20px; text-align: left; color: var(--primary); font-weight: 600; font-size: 15px; }
+    td { background: rgba(15, 23, 42, 0.6); padding: 18px 20px; border-radius: 12px; }
+
+    tr:hover td { background: rgba(0, 212, 255, 0.08); transform: scale(1.01); transition: all 0.3s; }
+
+    .status { padding: 8px 16px; border-radius: 50px; font-size: 13px; font-weight: 700; display: inline-block; }
+    .status-active { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .status-locked { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn { padding: 8px 14px; border: none; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: default; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-reset { background: #06b6d4; color: white; }
+    .btn-lock { background: #475569; color: white; }
+    .btn-edit { background: #6366f1; color: white; }
+    .btn-delete { background: #dc2626; color: white; }
+
+    .user-info small { display: block; color: #94a3b8; margin-top: 4px; font-size: 13px; }
+
+    @media (max-width: 992px) {
+      .sidebar { transform: translateX(-100%); }
+      .admin-content { margin-left: 0; padding: 20px; }
+      table, thead, tbody, th, td, tr { display: block; }
+      th { display: none; }
+      td { padding: 15px; border-radius: 12px; margin-bottom: 12px; }
+      td:before { content: attr(data-label); font-weight: bold; color: var(--primary); display: block; margin-bottom: 8px; }
+      .actions { justify-content: center; }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>Quản lý người dùng — AccountShop (Admin)</h1>
-        <a href="admin-dashboard" class="back-home-btn">⬅ Trở về trang chủ</a>
-      </div>
 
-      <div class="top-actions">
-        <input id="searchInput" class="search" type="text" placeholder="Tìm theo username hoặc email..." />
-      </div>
-    </header>
-
-    <div class="grid">
-      <!-- left: user table -->
-      <section class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <strong>Danh sách khách hàng</strong>
-          <div class="small muted">Tổng: <span id="totalCount">0</span></div>
-        </div>
-
-        <div id="tableWrap"></div>
-      </section>
-
-      <!-- right: form -->
-      <aside class="card">
-        <div style="margin-bottom:8px"><strong>Thêm / Sửa user</strong></div>
-
-        <div>
-          <label for="f_username">Username</label>
-          <input id="f_username" type="text" placeholder="ví dụ: khachhang01" />
-        </div>
-        <div>
-          <label for="f_email">Email</label>
-          <input id="f_email" type="email" placeholder="ví dụ: a@b.com" />
-        </div>
-        <div>
-          <label for="f_password">Mật khẩu (khi tạo)</label>
-          <input id="f_password" type="password" placeholder="Nhập mật khẩu hoặc để trống để tạo tự động" />
-        </div>
-
-        <div style="margin-top:8px;display:flex;gap:8px">
-          <button id="btnSave">Lưu</button>
-          <button id="btnResetForm" class="ghost">Xóa form</button>
-        </div>
-
-        <hr style="margin:12px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)">
-
-        <div class="small muted">
-          <strong>Ghi chú:</strong>
-          <ul style="padding-left:18px;margin:6px 0 0 0">
-          </ul>
-        </div>
-      </aside>
+  <header class="admin-header">
+    <a href="admin-dashboard.html" class="logo">
+      AccountShop
+    </a>
+    <div style="display:flex; align-items:center; gap:20px;">
+      <div class="page-title">Quản lý người dùng</div>
+      <a href="admin-dashboard.html" class="back-btn">Trở về Dashboard</a>
     </div>
+  </header>
+
+  <div class="admin-container">
+    <aside class="sidebar">
+      <h2>Quản Trị Hệ Thống</h2>
+      <ul style="list-style:none;">
+        <li><a href="user-management.html" class="active">Quản lý người dùng</a></li>
+        <li><a href="category-management.html">Quản lý loại sản phẩm</a></li>
+        <li><a href="product-management.html">Quản lý tài khoản game</a></li>
+        <li><a href="import-management.html">Nhập sản phẩm</a></li>
+        <li><a href="price-management.html">Quản lý giá bán</a></li>
+        <li><a href="order-management.html">Quản lý đơn hàng</a></li>
+        <li><a href="inventory-management.html">Quản lý tồn kho</a></li>
+      </ul>
+    </aside>
+
+    <main class="admin-content">
+      <div class="content-card">
+        <h2 class="card-title">
+          Danh sách người dùng (1.284 tài khoản)
+        </h2>
+
+        <div class="demo-notice">
+          Bản demo tĩnh – đầy đủ chức năng: Reset mật khẩu, Khóa/Mở khóa, Sửa, Xóa. Dữ liệu mẫu thực tế.
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Tài khoản</th>
+              <th>Email</th>
+              <th>Ngày tạo</th>
+              <th>Trạng thái</th>
+              <th style="text-align:center;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="Tài khoản">
+                <strong>hinatori</strong>
+                <small>Khách VIP • Đã mua 28 lần</small>
+              </td>
+              <td data-label="Email">hina@example.com</td>
+              <td data-label="Ngày tạo">01/02/2024 08:00</td>
+              <td data-label="Trạng thái"><span class="status status-active">Hoạt động</span></td>
+              <td data-label="Thao tác">
+                <div class="actions">
+                  <button class="btn btn-reset">Reset MK</button>
+                  <button class="btn btn-lock">Khóa</button>
+                  <button class="btn btn-edit">Sửa</button>
+                  <button class="btn btn-delete">Xóa</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="Tài khoản">
+                <strong>aqua</strong>
+                <small>Khách mới • 3 đơn hàng</small>
+              </td>
+              <td data-label="Email">aqua@vtuber.jp</td>
+              <td data-label="Ngày tạo">03/02/2024 11:20</td>
+              <td data-label="Trạng thái"><span class="status status-active">Hoạt động</span></td>
+              <td data-label="Thao tác">
+                <div class="actions">
+                  <button class="btn btn-reset">Reset MK</button>
+                  <button class="btn btn-lock">Khóa</button>
+                  <button class="btn btn-edit">Sửa</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="Tài khoản">
+                <strong>valorant_gamer</strong>
+                <small>Khách thân thiết • 156 đơn</small>
+              </td>
+              <td data-label="Email">valo@riot.com</td>
+              <td data-label="Ngày tạo">10/04/2024 09:45</td>
+              <td data-label="Trạng thái"><span class="status status-locked">Đã khóa</span></td>
+              <td data-label="Thao tác">
+                <div class="actions">
+                  <button class="btn btn-reset">Reset MK</button>
+                  <button class="btn btn-lock" style="background:#10b981;">Mở khóa</button>
+                  <button class="btn btn-edit">Sửa</button>
+                  <button class="btn btn-delete">Xóa</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="Tài khoản">
+                <strong>adminsub</strong>
+                <small>Quản trị viên phụ</small>
+              </td>
+              <td data-label="Email">sub@admin.com</td>
+              <td data-label="Ngày tạo">12/01/2024 18:22</td>
+              <td data-label="Trạng thái"><span class="status status-active">Quản trị viên</span></td>
+              <td data-label="Thao tác">
+                <div class="actions">
+                  <button class="btn btn-reset">Reset MK</button>
+                  <button class="btn btn-edit">Sửa</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
   </div>
 
-<script>
-
-const LS_KEY = 'ADM_users';
-const wrap = document.getElementById('tableWrap');
-const totalCount = document.getElementById('totalCount');
-const searchInput = document.getElementById('searchInput');
-
-function lsGet(){ 
-  try{ return JSON.parse(localStorage.getItem(LS_KEY)) || []; }
-  catch(e){ return []; }
-}
-function lsSet(v){ localStorage.setItem(LS_KEY, JSON.stringify(v)); }
-
-/* ----------- FIXED USERS ----------- */
-const FIXED_USERS = [
-  { id: "u001", username: "hinatori", email: "hina@example.com", password: "123456", locked: false, createdAt: "2024-02-01T08:00:00" },
-  { id: "u002", username: "aqua", email: "aqua@vtuber.jp", password: "pass001", locked: false, createdAt: "2024-02-03T11:20:00" },
-  { id: "u003", username: "kazu", email: "kazu@mail.com", password: "kazu789", locked: false, createdAt: "2024-03-02T14:10:00" },
-  { id: "u004", username: "adminsub", email: "sub@admin.com", password: "admin123", locked: false, createdAt: "2024-01-12T18:22:00" },
-  { id: "u005", username: "valorant_gamer", email: "valo@riot.com", password: "valo456", locked: false, createdAt: "2024-04-10T09:45:00" }
-];
-
-/* Luôn khởi tạo 5 user này nếu localStorage rỗng */
-function initFixedUsers() {
-  let data = lsGet();
-
-  if (data.length === 0) {
-    lsSet([...FIXED_USERS]);
-    return;
-  }
-
-  // Nếu người dùng xóa bớt → thêm lại
-  FIXED_USERS.forEach(baseUser => {
-    if (!data.some(u => u.id === baseUser.id)) {
-      data.push(baseUser);
-    }
-  });
-
-  lsSet(data);
-}
-
-/* ------------------- UI rendering ------------------- */
-
-function renderTable(filter=''){
-  const users = lsGet();
-  const f = (filter || '').toLowerCase().trim();
-  const list = f ? users.filter(u => u.username.toLowerCase().includes(f) || u.email.toLowerCase().includes(f)) : users;
-  totalCount.textContent = list.length;
-
-  if(list.length===0){
-    wrap.innerHTML = '<div class="small muted center" style="padding:30px">Không có user.</div>';
-    return;
-  }
-
-  let html = '<table><thead><tr><th>Tài khoản</th><th>Email</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>';
-
-  list.forEach(u=>{
-    html += `<tr class="${u.locked ? 'locked' : ''}">
-      <td><strong>${escapeHtml(u.username)}</strong><br>
-        <div class="small muted">Tạo: ${new Date(u.createdAt).toLocaleString()}</div>
-      </td>
-      <td>${escapeHtml(u.email)}</td>
-      <td>${u.locked ? '<span class="badge">Đã khóa</span>' : '<span class="badge">Hoạt động</span>'}</td>
-      <td>
-        <button class="btn-sm btn-reset" onclick="resetPassword('${u.id}')">Reset mật khẩu</button>
-        <button class="btn-sm btn-lock" onclick="toggleLock('${u.id}')">${u.locked ? 'Mở khóa' : 'Khóa'}</button>
-        <button class="btn-sm ghost" onclick="editUser('${u.id}')">Sửa</button>
-        <button class="btn-sm danger" onclick="deleteUser('${u.id}')">Xóa</button>
-      </td>
-    </tr>`;
-  });
-
-  html += '</tbody></table>';
-  wrap.innerHTML = html;
-}
-
-/* Escape */
-function escapeHtml(s){
-  if(!s) return '';
-  return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
-  .replaceAll('"','&quot;').replaceAll("'",'&#39;');
-}
-
-/* ------------------- Actions ------------------- */
-
-function resetPassword(id){
-  let users = lsGet();
-  const u = users.find(x=>x.id===id);
-  if(!u) return alert("Không tìm thấy user");
-
-  if(!confirm("Reset mật khẩu cho " + u.username + "?")) return;
-
-  const newPass = "reset" + Math.floor(Math.random()*90000+1000);
-  u.password = newPass;
-
-  lsSet(users);
-  renderTable();
-  alert("Mật khẩu mới của " + u.username + ":\n\n" + newPass);
-}
-
-function toggleLock(id){
-  let users = lsGet();
-  const u = users.find(x=>x.id===id);
-  u.locked = !u.locked;
-  lsSet(users);
-  renderTable();
-}
-
-function editUser(id){
-  let users = lsGet();
-  let u = users.find(x=>x.id===id);
-
-  document.getElementById('f_username').value = u.username;
-  document.getElementById('f_email').value = u.email;
-  document.getElementById('f_password').value = "";
-
-  document.getElementById('btnSave').dataset.editId = id;
-}
-
-function deleteUser(id){
-  if(!confirm("Xóa user này?")) return;
-  let users = lsGet();
-  users = users.filter(x=>x.id !== id);
-  lsSet(users);
-
-  initFixedUsers(); // đảm bảo đủ 5 user
-  renderTable();
-}
-
-/* ------------------- SAVE FORM ------------------- */
-
-document.getElementById('btnSave').addEventListener('click', ()=>{
-  const uVal = f_username.value.trim();
-  const eVal = f_email.value.trim();
-  const pVal = f_password.value;
-
-  let users = lsGet();
-
-  const editId = btnSave.dataset.editId;
-  if(editId){
-    const u = users.find(x=>x.id===editId);
-    u.username = uVal;
-    u.email = eVal;
-    if(pVal) u.password = pVal;
-    lsSet(users);
-    delete btnSave.dataset.editId;
-  }
-
-  resetForm();
-  renderTable();
-});
-
-function resetForm(){
-  f_username.value = '';
-  f_email.value = '';
-  f_password.value = '';
-  delete btnSave.dataset.editId;
-}
-
-/* Search */
-searchInput.addEventListener('input', e => renderTable(e.target.value));
-
-/* RUN INIT */
-initFixedUsers();
-renderTable();
-
-/* Expose */
-window.resetPassword = resetPassword;
-window.toggleLock = toggleLock;
-window.editUser = editUser;
-window.deleteUser = deleteUser;
-</script>
+</body>
+</html>
