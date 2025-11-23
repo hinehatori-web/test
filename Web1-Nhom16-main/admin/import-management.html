@@ -2,228 +2,352 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Quản lý nhập sản phẩm</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nhập sản phẩm | AccountShop Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
   <style>
+    :root {
+      --primary: #00d4ff;
+      --primary-dark: #0099cc;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --text: #e2e8f0;
+      --text-light: #94a3b8;
+      --border: #334155;
+      --sidebar-width: 280px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #0f1724;
-      color: #e2e8f0;
-      margin: 0;
-      padding: 24px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      color: var(--text);
+      min-height: 100vh;
     }
-    .container { max-width: 1000px; margin: auto; }
-    h1 { color: #38bdf8; font-size: 22px; }
-    .card {
-      background: rgba(255,255,255,0.04);
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+
+    /* Header */
+    .admin-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 70px;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      z-index: 1000;
     }
-    label { display: block; margin-top: 10px; }
-    input, select {
-      width: 100%;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: #e2e8f0;
-      padding: 8px;
-      border-radius: 8px;
-      outline: none;
-      margin-top: 4px;
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
     }
-    button {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+
+    .logo i {
+      font-size: 34px;
+      background: linear-gradient(45deg, #00d4ff, #9d4edd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .page-title { font-size: 20px; color: var(--text-light); }
+
+    .back-btn {
+      background: rgba(0, 212, 255, 0.15);
+      color: var(--primary);
+      padding: 10px 24px;
+      border-radius: 50px;
+      text-decoration: none;
       font-weight: 600;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      transition: all 0.3s;
     }
-    button.add { background: #06b6d4; color: #041324; }
-    button.edit { background: #1e3a8a; color: #e0f2fe; }
-    button.complete { background: #16a34a; color: white; }
-    button.delete { background: #dc2626; color: white; }
-    button.reset { background: transparent; border: 1px solid #475569; color: #94a3b8; }
+
+    .back-btn:hover {
+      background: var(--primary);
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+    }
+
+    /* Layout */
+    .admin-container {
+      display: flex;
+      margin-top: 70px;
+      min-height: calc(100vh - 70px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 30px 20px;
+      border-right: 1px solid var(--border);
+      position: fixed;
+      left: 0;
+      top: 70px;
+      bottom: 0;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      color: var(--primary);
+      margin-bottom: 30px;
+      font-size: 20px;
+      padding-left: 10px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 14px 18px;
+      color: var(--text-light);
+      text-decoration: none;
+      border-radius: 12px;
+      margin: 8px 10px;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .sidebar a:hover, .sidebar a.active {
+      background: linear-gradient(90deg, rgba(0, 212, 255, 0.15), transparent);
+      color: var(--primary);
+      transform: translateX(8px);
+    }
+
+    .sidebar a i { font-size: 20px; width: 30px; }
+
+    /* Main Content */
+    .admin-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: 40px;
+    }
+
+    .content-card {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 30px;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      margin-bottom: 30px;
+    }
+
+    .card-title {
+      font-size: 26px;
+      background: linear-gradient(90deg, #00d4ff, #9d4edd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .demo-notice {
+      background: rgba(251, 191, 36, 0.15);
+      color: #fbbf24;
+      padding: 16px;
+      border-radius: 12px;
+      border-left: 4px solid #fbbf24;
+      font-size: 15px;
+      margin-bottom: 25px;
+    }
+
     table {
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 16px;
+      border-collapse: separate;
+      border-spacing: 0 12px;
+      margin-top: 10px;
     }
-    th, td {
+
+    th {
+      background: rgba(0, 212, 255, 0.1);
+      padding: 18px 20px;
       text-align: left;
-      padding: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 15px;
     }
-    th { color: #94a3b8; font-size: 14px; }
-    .actions button { margin-right: 6px; font-size: 13px; }
+
+    td {
+      background: rgba(15, 23, 42, 0.6);
+      padding: 18px 20px;
+      border-radius: 12px;
+    }
+
+    tr:hover td {
+      background: rgba(0, 212, 255, 0.08);
+      transform: scale(1.01);
+      transition: all 0.3s;
+    }
+
     .status {
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
       display: inline-block;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      font-size: 12px;
     }
-    .search {
-      margin-bottom: 10px;
+
+    .status-completed {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-pending {
+      background: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .price { font-weight: 600; color: #00d4ff; }
+    .qty { font-weight: 600; color: #a78bfa; }
+
+    @media (max-width: 992px) {
+      .sidebar { transform: translateX(-100%); }
+      .admin-content { margin-left: 0; padding: 20px; }
+      table, thead, tbody, th, td, tr { display: block; }
+      th { display: none; }
+      td { padding: 15px; border-radius: 12px; margin-bottom: 12px; }
+      td:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: var(--primary);
+        display: block;
+        margin-bottom: 8px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Quản lý nhập sản phẩm</h1>
-    <a href="admin-dashboard" class="back-home-btn">⬅ Trở về trang chủ</a>
-    <!-- Form thêm / sửa phiếu nhập -->
-    <div class="card">
-      <h3>Thêm / Sửa phiếu nhập hàng</h3>
 
-      <label>Ngày nhập</label>
-      <input type="date" id="importDate" />
+  <!-- Header -->
+  <header class="admin-header">
+    <a href="admin-dashboard.html" class="logo">
+      <i class="fas fa-gamepad"></i> AccountShop
+    </a>
+    <div style="display:flex; align-items:center; gap:20px;">
+      <div class="page-title">Nhập sản phẩm mới</div>
+      <a href="admin-dashboard.html" class="back-btn">
+        Trở về Dashboard
+      </a>
+    </div>
+  </header>
 
-      <label>Sản phẩm</label>
-      <input type="text" id="importProduct" placeholder="VD: Valorant Diamond" />
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>Quản Trị Hệ Thống</h2>
+      <ul style="list-style:none;">
+        <li><a href="user-management.html"><i class="fas fa-users"></i> Quản lý người dùng</a></li>
+        <li><a href="category-management.html"><i class="fas fa-folder-open"></i> Quản lý loại sản phẩm</a></li>
+        <li><a href="product-management.html"><i class="fas fa-gamepad"></i> Quản lý tài khoản game</a></li>
+        <li><a href="import-management.html" class="active"><i class="fas fa-truck-loading"></i> Nhập sản phẩm</a></li>
+        <li><a href="price-management.html"><i class="fas fa-tags"></i> Quản lý giá bán</a></li>
+        <li><a href="order-management.html"><i class="fas fa-shopping-cart"></i> Quản lý đơn hàng</a></li>
+        <li><a href="inventory-management.html"><i class="fas fa-warehouse"></i> Quản lý tồn kho</a></li>
+      </ul>
+    </aside>
 
-      <label>Giá nhập (VNĐ)</label>
-      <input type="number" id="importPrice" placeholder="VD: 500000" />
+    <!-- Main Content -->
+    <main class="admin-content">
+      <div class="content-card">
+        <h2 class="card-title">
+          <i class="fas fa-truck-loading"></i> Danh sách phiếu nhập hàng (32 phiếu gần nhất)
+        </h2>
 
-      <label>Số lượng</label>
-      <input type="number" id="importQty" placeholder="VD: 10" />
 
-      <div style="margin-top:10px; display:flex; gap:8px;">
-        <button id="btnSave" class="add">Lưu phiếu nhập</button>
-        <button id="btnReset" class="reset">Xóa form</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Mã phiếu</th>
+              <th>Ngày nhập</th>
+              <th>Sản phẩm</th>
+              <th>Giá nhập</th>
+              <th>Số lượng</th>
+              <th>Tổng tiền</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="Mã">IM8F2K</td>
+              <td data-label="Ngày">23/11/2025</td>
+              <td data-label="Sản phẩm">Free Fire Rank Huyền Thoại 1</td>
+              <td data-label="Giá nhập"><span class="price">420,000 ₫</span></td>
+              <td data-label="Số lượng"><span class="qty">15</span></td>
+              <td data-label="Tổng"><strong>6,300,000 ₫</strong></td>
+              <td data-label="Trạng thái"><span class="status status-completed">Hoàn thành</span></td>
+            </tr>
+            <tr>
+              <td data-label="Mã">IM7X9P</td>
+              <td data-label="Ngày">22/11/2025</td>
+              <td data-label="Sản phẩm">Liên Quân Rank Kim Cương + 120 skin</td>
+              <td data-label="Giá nhập"><span class="price">580,000 ₫</span></td>
+              <td data-label="Số lượng"><span class="qty">8</span></td>
+              <td data-label="Tổng"><strong>4,640,000 ₫</strong></td>
+              <td data-label="Trạng thái"><span class="status status-completed">Hoàn thành</span></td>
+            </tr>
+            <tr>
+              <td data-label="Mã">IM6M4Q</td>
+              <td data-label="Ngày">21/11/2025</td>
+              <td data-label="Sản phẩm">Robux 10.000</td>
+              <td data-label="Giá nhập"><span class="price">1,850,000 ₫</span></td>
+              <td data-label="Số lượng"><span class="qty">20</span></td>
+              <td data-label="Tổng"><strong>37,000,000 ₫</strong></td>
+              <td data-label="Trạng thái"><span class="status status-pending">Chưa hoàn thành</span></td>
+            </tr>
+            <tr>
+              <td data-label="Mã">IM5J1R</td>
+              <td data-label="Ngày">20/11/2025</td>
+              <td data-label="Sản phẩm">Valorant Rank Immortal</td>
+              <td data-label="Giá nhập"><span class="price">1,200,000 ₫</span></td>
+              <td data-label="Số lượng"><span class="qty">5</span></td>
+              <td data-label="Tổng"><strong>6,000,000 ₫</strong></td>
+              <td data-label="Trạng thái"><span class="status status-completed">Hoàn thành</span></td>
+            </tr>
+            <tr>
+              <td data-label="Mã">IM4H8T</td>
+              <td data-label="Ngày">19/11/2025</td>
+              <td data-label="Sản phẩm">GiftCard Google Play 500k</td>
+              <td data-label="Giá nhập"><span class="price">460,000 ₫</span></td>
+              <td data-label="Số lượng"><span class="qty">50</span></td>
+              <td data-label="Tổng"><strong>23,000,000 ₫</strong></td>
+              <td data-label="Trạng thái"><span class="status status-completed">Hoàn thành</span></td>
+            </tr>
+            <tr>
+              <td data-label="Mã">IM3G5U</td>
+              <td data-label="Ngày">18/11/2025</td>
+              <td data-label="Sản phẩm">Genshin Impact AR57 + C6 Raiden</td>
+              <td data-label="Giá nhập"><span class="price">3,800,000 ₫</span></td>
+              <td data-label="Số lượng"><span class="qty">3</span></td>
+              <td data-label="Tổng"><strong>11,400,000 ₫</strong></td>
+              <td data-label="Trạng thái"><span class="status status-pending">Chưa hoàn thành</span></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <small id="formMsg" style="display:block;margin-top:8px;color:#94a3b8;">Dữ liệu demo, lưu bằng LocalStorage.</small>
-    </div>
-
-    <!-- Danh sách phiếu nhập -->
-    <div class="card">
-      <h3>Danh sách phiếu nhập</h3>
-      <input class="search" id="searchBox" type="text" placeholder="Tìm phiếu nhập theo mã hoặc tên sản phẩm...">
-      <div id="importTableWrap"></div>
-    </div>
+    </main>
   </div>
 
-  <script>
-    const LS_KEY = 'IMPORT_LIST';
-
-    function getImports() {
-      try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; }
-      catch { return []; }
-    }
-    function setImports(data) { localStorage.setItem(LS_KEY, JSON.stringify(data)); }
-    function genId() { return 'IM' + Math.random().toString(36).substr(2, 6).toUpperCase(); }
-
-    function renderTable(keyword='') {
-      const imports = getImports();
-      const wrap = document.getElementById('importTableWrap');
-      const filtered = imports.filter(p =>
-        p.product.toLowerCase().includes(keyword.toLowerCase()) ||
-        p.id.toLowerCase().includes(keyword.toLowerCase())
-      );
-
-      if (filtered.length === 0) {
-        wrap.innerHTML = '<p style="color:#94a3b8">Chưa có phiếu nhập nào.</p>';
-        return;
-      }
-
-      let html = '<table><thead><tr><th>Mã phiếu</th><th>Ngày nhập</th><th>Sản phẩm</th><th>Giá nhập</th><th>Số lượng</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>';
-      filtered.forEach(p => {
-        html += `<tr>
-          <td>${p.id}</td>
-          <td>${p.date}</td>
-          <td>${p.product}</td>
-          <td>${Number(p.price).toLocaleString()} ₫</td>
-          <td>${p.qty}</td>
-          <td><span class="status" style="color:${p.completed?'#16a34a':'#facc15'}">${p.completed?'Hoàn thành':'Chưa hoàn thành'}</span></td>
-          <td class="actions">
-            <button class="edit" onclick="editImport('${p.id}')" ${p.completed?'disabled':''}>Sửa</button>
-            <button class="delete" onclick="deleteImport('${p.id}')">Xóa</button>
-            <button class="complete" onclick="completeImport('${p.id}')" ${p.completed?'disabled':''}>Hoàn thành</button>
-          </td>
-        </tr>`;
-      });
-      html += '</tbody></table>';
-      wrap.innerHTML = html;
-    }
-
-    document.getElementById('btnSave').addEventListener('click', () => {
-      const date = document.getElementById('importDate').value;
-      const product = document.getElementById('importProduct').value.trim();
-      const price = document.getElementById('importPrice').value.trim();
-      const qty = document.getElementById('importQty').value.trim();
-      if (!date || !product || !price || !qty) return alert('Vui lòng nhập đầy đủ thông tin.');
-
-      let list = getImports();
-      const editId = document.getElementById('btnSave').dataset.editId;
-
-      if (editId) {
-        const item = list.find(x => x.id === editId);
-        if (!item || item.completed) return;
-        item.date = date;
-        item.product = product;
-        item.price = price;
-        item.qty = qty;
-        document.getElementById('formMsg').innerText = 'Đã cập nhật phiếu nhập.';
-        delete document.getElementById('btnSave').dataset.editId;
-      } else {
-        const newItem = {
-          id: genId(),
-          date, product, price, qty,
-          completed: false
-        };
-        list.unshift(newItem);
-        document.getElementById('formMsg').innerText = 'Đã thêm phiếu nhập mới.';
-      }
-
-      setImports(list);
-      resetForm();
-      renderTable();
-    });
-
-    function editImport(id) {
-      const list = getImports();
-      const item = list.find(x => x.id === id);
-      if (!item) return;
-      if (item.completed) return alert('Không thể sửa phiếu đã hoàn thành.');
-      document.getElementById('importDate').value = item.date;
-      document.getElementById('importProduct').value = item.product;
-      document.getElementById('importPrice').value = item.price;
-      document.getElementById('importQty').value = item.qty;
-      document.getElementById('btnSave').dataset.editId = id;
-      document.getElementById('formMsg').innerText = 'Đang sửa phiếu nhập: ' + id;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function deleteImport(id) {
-      if (!confirm('Bạn có chắc muốn xóa phiếu nhập này?')) return;
-      let list = getImports();
-      list = list.filter(x => x.id !== id);
-      setImports(list);
-      renderTable();
-    }
-
-    function completeImport(id) {
-      let list = getImports();
-      const item = list.find(x => x.id === id);
-      if (!item) return;
-      item.completed = true;
-      setImports(list);
-      renderTable();
-    }
-
-    document.getElementById('btnReset').addEventListener('click', resetForm);
-    function resetForm() {
-      document.getElementById('importDate').value = '';
-      document.getElementById('importProduct').value = '';
-      document.getElementById('importPrice').value = '';
-      document.getElementById('importQty').value = '';
-      document.getElementById('formMsg').innerText = 'Dữ liệu demo, lưu bằng LocalStorage.';
-      delete document.getElementById('btnSave').dataset.editId;
-    }
-
-    document.getElementById('searchBox').addEventListener('input', e => renderTable(e.target.value));
-
-    renderTable();
-  </script>
 </body>
 </html>
